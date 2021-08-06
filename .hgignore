@@ -1,0 +1,23 @@
+syntax: glob
+CVS
+Generated/*.cs
+packages
+*.nupkg
+*.suo
+*.user
+bin/*
+obj/*
+lib/*
+_*/*
+Backup/*
+UpgradeLog.htm
+TestResults/*
+*.psess
+*.vsp
+*~
+*.orig
+.vs/*
+.git/*
+data/*
+test_*/*
+local.settings.json
