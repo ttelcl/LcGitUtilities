@@ -26,8 +26,10 @@ namespace LcGitLib.RepoTools
     /// The directory from where to start searching
     /// </param>
     /// <returns>
-    /// Returns null if not found. Returns a ".git" folder for full repositories,
-    /// or the "xxxxx.git" bare repository folder for bare repositories
+    /// Returns null if not found or if a .nogit folder or file is found
+    /// before a .git folder.
+    /// Returns a ".git" folder for full repositories, or the "xxxxx.git" bare
+    /// repository folder for bare repositories.
     /// </returns>
     public static string FindGitFolder(string startFolder)
     {
@@ -51,6 +53,12 @@ namespace LcGitLib.RepoTools
         default:
           throw new InvalidOperationException(
             "Unexpected git probe result");
+      }
+      var nogitItem = Path.Combine(startFolder, ".nogit");
+      if(File.Exists(nogitItem) || Directory.Exists(nogitItem))
+      {
+        // Abort immediately
+        return null;
       }
       var gitFolder = Path.Combine(startFolder, ".git");
       if(LooksLikeGitFolder(gitFolder)==3)
