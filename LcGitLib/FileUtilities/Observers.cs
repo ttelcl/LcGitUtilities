@@ -79,6 +79,32 @@ namespace LcGitLib.FileUtilities
     }
 
     /// <summary>
+    /// Build an observer that transforms TSource objects to TSink objects,
+    /// and optionally drops TSink objects that happen to be null
+    /// </summary>
+    /// <typeparam name="TSource">
+    /// The source item type (unconstrained)
+    /// </typeparam>
+    /// <typeparam name="TSink">
+    /// The sink item type (must be a reference type)
+    /// </typeparam>
+    /// <param name="sink">
+    /// The sink to write to
+    /// </param>
+    /// <param name="transform">
+    /// The transform function
+    /// </param>
+    /// <returns>
+    /// An observer that observes TSource items
+    /// </returns>
+    public static IObserver<TSource> ObserveTransformed<TSource, TSink>(
+      this IObserver<TSink> sink,
+      Func<TSource, TSink> transform)
+    {
+      return new TransformingObserver<TSource, TSink>(transform, sink);
+    }
+
+    /// <summary>
     /// Build an observer for saving GIT raw log lines to a file
     /// </summary>
     /// <param name="writer">
@@ -115,24 +141,44 @@ namespace LcGitLib.FileUtilities
       this IObserver<string> sink,
       string fileTail)
     {
-      var ext = Path.GetExtension(fileTail).ToLowerInvariant();
-      if(ext == ".txt")
+      if(fileTail.EndsWith(".txt", StringComparison.InvariantCultureIgnoreCase))
       {
         return sink;
       }
-      else if(ext == ".csv")
+      else if(fileTail.EndsWith(".csv", StringComparison.InvariantCultureIgnoreCase))
       {
         return
           sink
           .ObserveCsvCommitEntries()
           .ObserveAsCommitEntries();
       }
-      else
+      else if(fileTail.EndsWith(".summary.json", StringComparison.InvariantCultureIgnoreCase)
+          || fileTail.EndsWith(".summary.jsonl", StringComparison.InvariantCultureIgnoreCase)
+          || fileTail.EndsWith(".summary.mjson", StringComparison.InvariantCultureIgnoreCase)
+          || fileTail.EndsWith(".summary.ljson", StringComparison.InvariantCultureIgnoreCase)
+          || fileTail.EndsWith(".summary.jsonm", StringComparison.InvariantCultureIgnoreCase))
+      {
+        return
+          sink
+          .ObserveJsonObjects(fileTail)
+          .ObserveTransformed<CommitEntry,CommitSummary>(e => CommitSummary.FromEntry(e))
+          .ObserveAsCommitEntries();
+      }
+      else if(fileTail.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase)
+          || fileTail.EndsWith(".jsonl", StringComparison.InvariantCultureIgnoreCase)
+          || fileTail.EndsWith(".mjson", StringComparison.InvariantCultureIgnoreCase)
+          || fileTail.EndsWith(".ljson", StringComparison.InvariantCultureIgnoreCase)
+          || fileTail.EndsWith(".jsonm", StringComparison.InvariantCultureIgnoreCase))
       {
         return
           sink
           .ObserveJsonObjects(fileTail)
           .ObserveAsCommitEntries();
+      }
+      else
+      {
+        throw new NotSupportedException(
+          $"Unsupported file extension in: {fileTail}");
       }
     }
 

@@ -41,6 +41,7 @@ namespace LcGitLib.RawLog
       Author = author;
       Committer = committer;
       Other = other ?? new Dictionary<string, string>();
+      CommitTag = CommitId.AsCommitTag();
     }
 
     /// <summary>
@@ -57,6 +58,12 @@ namespace LcGitLib.RawLog
     /// </summary>
     [JsonProperty("commit")]
     public string CommitId { get; }
+
+    /// <summary>
+    /// The 'commit tag' - a 63 number derived from the Commit ID
+    /// </summary>
+    [JsonIgnore()]
+    public long CommitTag { get; }
 
     /// <summary>
     /// The tree ID string
