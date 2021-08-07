@@ -224,6 +224,32 @@ let runRecipe recipe args =
     for node in pros do
       node.Entry |> printEntry true
   
+  | "graphtest" ->
+    let repo = GitRepository.Locate(startFolder) // fails if not valid
+    let cmdHost = makeCommandHost true
+    printfn "Loading graph"
+    let graph = repo.LoadSummaryGraph(cmdHost, true)
+    graph.PrunedEdgeCount |> string |> lp "Pruned Edges"
+    graph.Roots.Count |> string |> lp "Roots"
+    graph.Tips.Count |> string |> lp "Tips"
+    let cmap = graph.NewColorMap()
+    for i in 0 .. graph.Roots.Count-1 do
+      let root = graph.Roots.[i]
+      let rootId = root.Id
+      let rootId2 = root.Seed.CommitId
+      let mask = 1 <<< i
+      printf "Filling root %d (%s) with mask %05X" rootId rootId2 mask
+      resetColor()
+      printfn "."
+      let marked = cmap.MaskRecursive(mask, cmap.PickChildren, [|rootId|])
+      printfn "Marked: %d" marked
+      ()
+    let counterMap = cmap.CountColors()
+    printfn "Counters:"
+    for kvp in counterMap |> Seq.sortBy (fun kv -> kv.Key) do
+      printfn "%05X : %5d" kvp.Key kvp.Value
+    ()
+  
   | "help" ->
     recipeUsage()
 

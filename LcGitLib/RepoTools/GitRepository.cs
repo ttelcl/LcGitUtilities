@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using LcGitLib.Cfg;
 using LcGitLib.GitConfigFiles;
 using LcGitLib.GitRunning;
+using LcGitLib.GraphModel;
 using LcGitLib.MetaBase;
 using LcGitLib.RawLog;
 
@@ -169,7 +170,7 @@ namespace LcGitLib.RepoTools
     }
 
     /// <summary>
-    /// Load the repository's full commit graph
+    /// OBSOLETE Load the repository's full commit graph
     /// </summary>
     /// <param name="commandHost">
     /// The command host used to invoke git.exe
@@ -180,6 +181,23 @@ namespace LcGitLib.RepoTools
     public CommitGraph LoadGraph(GitCommandHost commandHost)
     {
       return commandHost.LoadGraph(GitFolder);
+    }
+
+    /// <summary>
+    /// Load the repository's full graph as a SummaryGraph
+    /// </summary>
+    /// <param name="commandHost">
+    /// The command host used to invoke GIT
+    /// </param>
+    /// <param name="allowPruning">
+    /// If true, partial graphs are allowed and pruned.
+    /// </param>
+    /// <returns>
+    /// A new SummaryGraph instance
+    /// </returns>
+    public SummaryGraph LoadSummaryGraph(GitCommandHost commandHost, bool allowPruning=false)
+    {
+      return commandHost.LoadSummaryGraph(GitFolder, allowPruning);
     }
 
     /// <summary>

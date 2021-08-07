@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 using LcGitLib.Cfg;
 using LcGitLib.FileUtilities;
+using LcGitLib.GraphModel;
 using LcGitLib.RawLog;
 
 namespace LcGitLib.GitRunning
@@ -89,7 +90,7 @@ namespace LcGitLib.GitRunning
     }
 
     /// <summary>
-    /// Capture the entire commit history and transform it into a commit graph
+    /// OBSOLETE Capture the entire commit history and transform it into a commit graph
     /// </summary>
     public static CommitGraph LoadGraph(
       this GitCommandHost host,
@@ -113,6 +114,35 @@ namespace LcGitLib.GitRunning
           $"Capturing commits for building graph: failed with status {status}");
       }
       var graph = new CommitGraph(capture.CapturedItems);
+      return graph;
+    }
+
+    public static SummaryGraph LoadSummaryGraph(
+      this GitCommandHost host,
+      string startFolder = null,
+      bool allowPruning = false)
+    {
+      var cmd =
+        host
+        .NewCommand(true)
+        .AddPre("-C", startFolder)
+        .WithCommand("log")
+        .AddPost("--all", "--pretty=raw");
+      var capture =
+        new CapturingObserver<CommitSummary>();
+      var observer =
+        capture
+        .ObserveTransformed<CommitEntry, CommitSummary>(e => CommitSummary.FromEntry(e));
+      var sink =
+        observer
+        .ObserveAsCommitEntries();
+      var status = host.RunToLineObserver(cmd, sink, true);
+      if(status != 0)
+      {
+        throw new InvalidOperationException(
+          $"Capturing commits for building graph: failed with status {status}");
+      }
+      var graph = new SummaryGraph(capture.CapturedItems, allowPruning);
       return graph;
     }
 

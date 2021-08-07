@@ -2,6 +2,8 @@
  * (c) 2021  VTT / ttelcl
  */
 
+using LcGitLib.GraphModel;
+
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ namespace LcGitLib.RawLog
   /// <summary>
   /// Represents a full commit entry as read from "git log --pretty=raw" output.
   /// </summary>
-  public class CommitEntry
+  public class CommitEntry : IGraphNodeSeed<string>
   {
     private readonly List<string> _parents;
     private readonly List<string> _messageLines;
@@ -58,6 +60,12 @@ namespace LcGitLib.RawLog
     /// </summary>
     [JsonProperty("commit")]
     public string CommitId { get; }
+
+    /// <summary>
+    /// Implements IGraphSeedNode{string}.Id (by returning CommitId)
+    /// </summary>
+    [JsonIgnore()]
+    public string Id { get => CommitId; }
 
     /// <summary>
     /// The 'commit tag' - a 63 number derived from the Commit ID

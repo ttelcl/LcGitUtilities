@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using LcGitLib.GraphModel;
+
 using Newtonsoft.Json;
 
 namespace LcGitLib.RawLog
@@ -17,7 +19,7 @@ namespace LcGitLib.RawLog
   /// <summary>
   /// Compacted variant of a raw CommitEntry
   /// </summary>
-  public class CommitSummary
+  public class CommitSummary: IGraphNodeSeed<long>
   {
     /// <summary>
     /// Create a new CommitSummary
@@ -28,7 +30,7 @@ namespace LcGitLib.RawLog
       string author,
       string label,
       IEnumerable<long> parents,
-      string committer=null)
+      string committer = null)
     {
       CommitId = commit;
       CommitTag = CommitId.AsCommitTag();
@@ -49,12 +51,12 @@ namespace LcGitLib.RawLog
     /// </summary>
     public static CommitSummary FromEntry(CommitEntry e)
     {
-      if(e==null)
+      if(e == null)
       {
         return null;
       }
       var stamp = DateTimeOffset.FromUnixTimeSeconds(0);
-      if(e.Author!=null && e.Author.TimeStamp>stamp)
+      if(e.Author != null && e.Author.TimeStamp > stamp)
       {
         stamp = e.Author.TimeStamp;
       }
@@ -83,6 +85,12 @@ namespace LcGitLib.RawLog
     /// </summary>
     [JsonProperty("id")]
     public long CommitTag { get; }
+
+    /// <summary>
+    /// Implements IGraphNodeSeed{long}.Id by returning the CommitTag
+    /// </summary>
+    [JsonIgnore()]
+    public long Id { get => CommitTag; }
 
     /// <summary>
     /// The full commit ID
