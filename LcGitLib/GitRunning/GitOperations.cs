@@ -117,6 +117,22 @@ namespace LcGitLib.GitRunning
       return graph;
     }
 
+    /// <summary>
+    /// Load the commit graph of a repository in Summary form
+    /// </summary>
+    /// <param name="host">
+    /// The GIT.exe wrapper
+    /// </param>
+    /// <param name="startFolder">
+    /// The folder used as anchor to find the repository to use (null to use
+    /// Environment.CurrentDirectory)
+    /// </param>
+    /// <param name="allowPruning">
+    /// If false, an exception is thrown if any of the referenced parents are missing.
+    /// If true, such references are ignored, and their edges omitted from the graph
+    /// (use SummaryGraph.PrunedEdgeCount to check if that happened)
+    /// </param>
+    /// <returns></returns>
     public static SummaryGraph LoadSummaryGraph(
       this GitCommandHost host,
       string startFolder = null,
@@ -130,11 +146,9 @@ namespace LcGitLib.GitRunning
         .AddPost("--all", "--pretty=raw");
       var capture =
         new CapturingObserver<CommitSummary>();
-      var observer =
-        capture
-        .ObserveTransformed<CommitEntry, CommitSummary>(e => CommitSummary.FromEntry(e));
       var sink =
-        observer
+        capture
+        .ObserveTransformed<CommitEntry, CommitSummary>(e => CommitSummary.FromEntry(e))
         .ObserveAsCommitEntries();
       var status = host.RunToLineObserver(cmd, sink, true);
       if(status != 0)

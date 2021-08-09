@@ -23,6 +23,7 @@ namespace LcGitLib.GraphModel
     private readonly GraphNodeSet<TId, TSeed> _nodes;
     private readonly List<Node> _roots;
     private readonly List<Node> _tips;
+    private readonly List<Node> _nodesList;
 
     /// <summary>
     /// Create a new Graph
@@ -32,13 +33,17 @@ namespace LcGitLib.GraphModel
       bool allowPruning)
     {
       _nodes = new GraphNodeSet<TId, TSeed>(this, false);
+      _nodesList = new List<Node>();
+      Nodes = _nodesList.AsReadOnly();
       _roots = new List<Node>();
       _tips = new List<Node>();
       Roots = _roots.AsReadOnly();
       Tips = _roots.AsReadOnly();
+      var index = 0;
       foreach(var seed in seeds)
       {
-        var node = new Node(this, seed);
+        var node = new Node(this, seed, index++);
+        _nodesList.Add(node);
         _nodes[node.Id] = node;
       }
       foreach(var node in _nodes.Values)
@@ -86,9 +91,14 @@ namespace LcGitLib.GraphModel
     }
 
     /// <summary>
-    /// Enumerate all nodes
+    /// The list of all nodes. Nodes[i].Index == i.
     /// </summary>
-    public IEnumerable<Node> Nodes { get => _nodes.Values; }
+    public IReadOnlyList<Node> Nodes { get; }
+
+    /// <summary>
+    /// Enumerate all nodes (based on the ID mapping)
+    /// </summary>
+    public IEnumerable<Node> NodeValues { get => _nodes.Values; }
 
     /// <summary>
     /// Enumerate all keys
@@ -152,7 +162,7 @@ namespace LcGitLib.GraphModel
       private readonly List<Node> _parents;
       private readonly List<Node> _children;
 
-      internal Node(Graph<TId, TSeed> owner, TSeed seed)
+      internal Node(Graph<TId, TSeed> owner, TSeed seed, int index)
       {
         _parents = new List<Node>();
         _children = new List<Node>();
@@ -160,6 +170,7 @@ namespace LcGitLib.GraphModel
         Seed = seed;
         Parents = _parents.AsReadOnly();
         Children = _children.AsReadOnly();
+        Index = index;
       }
 
       /// <summary>
@@ -176,6 +187,12 @@ namespace LcGitLib.GraphModel
       /// This node's ID
       /// </summary>
       public TId Id { get => Seed.Id; }
+
+      /// <summary>
+      /// An index that uniquely identifies the node in its graph
+      /// (but has no meaning outside its graph)
+      /// </summary>
+      public int Index { get; }
 
       /// <summary>
       /// The number of parents in the seed that could not be matched in the owner graph

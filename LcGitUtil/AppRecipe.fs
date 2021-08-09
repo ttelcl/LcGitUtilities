@@ -30,6 +30,7 @@ let recipeUsage () =
   p2 "repo-init         Initialize the repo-info file for this repository"
   p2 "tips              Load the repo graph and print the tip commit(s)"
   p2 "graph             Load the repo graph and print some observations"
+  p2 "graphtest         (debugging new graph code)"
   p2 "help              Prints this message"
 
 let runRecipe recipe args =
