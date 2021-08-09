@@ -94,5 +94,42 @@ namespace LcGitLib.GraphModel
       return nodes.Values.SelectMany(node => node.Children);
     }
 
+    /// <summary>
+    /// Create a new MutableGraph containing all node seeds from the source graph
+    /// </summary>
+    public static MutableGraph<TId, TSeed> ToMutableGraph<TId, TSeed>(
+      this Graph<TId, TSeed> graph,
+      bool connectEdges = true)
+      where TSeed : IGraphNodeSeed<TId>
+      where TId : IEquatable<TId>
+    {
+      return MutableGraph<TId, TSeed>.FromGraph(graph, connectEdges);
+    }
+
+    /// <summary>
+    /// Return a topologically sorted list of nodes
+    /// </summary>
+    /// <param name="graph">
+    /// The graph whose nodes to sort
+    /// </param>
+    /// <param name="rootsToTips">
+    /// If true, return the nodes in roots to tips order (parents first),
+    /// otherwise return the nodes in tips to roots order (children first)
+    /// </param>
+    public static List<Graph<TId, TSeed>.Node> TopologicalSort<TId, TSeed>(
+      this Graph<TId, TSeed> graph,
+      bool rootsToTips = false)
+      where TSeed : IGraphNodeSeed<TId>
+      where TId : IEquatable<TId>
+    {
+      var mg = graph.ToMutableGraph(true);
+      var seeds = mg.TopologicalSortDestructive();
+      if(rootsToTips)
+      {
+        seeds.Reverse();
+      }
+      return seeds.Select(seed => graph[seed.Id]).ToList();
+    }
+
   }
 }

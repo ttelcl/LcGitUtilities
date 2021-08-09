@@ -8,6 +8,7 @@ open LcGitLib.GitRunning
 open LcGitLib.FileUtilities
 open LcGitLib.RawLog
 open LcGitLib.RepoTools
+open LcGitLib.GraphModel
 
 open CommonTools
 open ArgumentLogger
@@ -230,6 +231,7 @@ let runRecipe recipe args =
     let cmdHost = makeCommandHost true
     printfn "Loading graph"
     let graph = repo.LoadSummaryGraph(cmdHost, true)
+    graph.Nodes.Count |> string |> lp "Node Count"
     graph.PrunedEdgeCount |> string |> lp "Pruned Edges"
     graph.Roots.Count |> string |> lp "Roots"
     let tipCount = graph.Tips.Count
@@ -255,6 +257,30 @@ let runRecipe recipe args =
     printfn "Counters:"
     for kvp in counterMap |> Seq.sortBy (fun kv -> kv.Key) do
       printfn "%07X : %5d" kvp.Key kvp.Value
+    ()
+  
+  | "topotest" ->
+    let repo = GitRepository.Locate(startFolder) // fails if not valid
+    let cmdHost = makeCommandHost true
+    printfn "Loading graph"
+    let graph = repo.LoadSummaryGraph(cmdHost, true)
+    graph.Nodes.Count |> string |> lp "Node Count"
+    graph.PrunedEdgeCount |> string |> lp "Pruned Edges"
+    graph.Roots.Count |> string |> lp "Roots"
+    let tipCount = graph.Tips.Count
+    tipCount |> string |> lp "Tips"
+    printfn "Topologically sorting"
+    let topo = graph.TopologicalSort(false)
+    let topoMap = graph.NewColorMap();
+    for i in 0..(topo.Count-1) do
+      topoMap.[topo.[i]] <- i
+    printfn "First few nodes:"
+    for node in topo |> Seq.truncate 30 do
+      topoMap.[node] |> printf " %5d"
+      printf " -> "
+      for p in node.Parents do
+        topoMap.[p] |> printf " %5d"
+      printfn "."
     ()
   
   | "help" ->
