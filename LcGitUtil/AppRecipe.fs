@@ -232,23 +232,29 @@ let runRecipe recipe args =
     let graph = repo.LoadSummaryGraph(cmdHost, true)
     graph.PrunedEdgeCount |> string |> lp "Pruned Edges"
     graph.Roots.Count |> string |> lp "Roots"
-    graph.Tips.Count |> string |> lp "Tips"
+    let tipCount = graph.Tips.Count
+    tipCount |> string |> lp "Tips"
     let cmap = graph.NewColorMap()
     for i in 0 .. graph.Roots.Count-1 do
       let root = graph.Roots.[i]
       let rootId = root.Id
       let rootId2 = root.Seed.CommitId
       let mask = 1 <<< i
-      printf "Filling root %d (%s) with mask %05X" rootId rootId2 mask
+      printf "Filling root %19d (%s) with mask %07X" rootId rootId2 mask
       resetColor()
       printfn "."
       let marked = cmap.MaskRecursive(mask, cmap.PickChildren, [|rootId|])
-      printfn "Marked: %d" marked
+      let markedTips =
+        cmap.WhereBitMask(mask)
+        |> Seq.map (fun id -> graph.[id])
+        |> Seq.where (fun node -> node.Children.Count=0)
+        |> Seq.toArray
+      printfn "Marked: %d (%d tips, %d unmarked)" marked markedTips.Length (tipCount - markedTips.Length)
       ()
     let counterMap = cmap.CountColors()
     printfn "Counters:"
     for kvp in counterMap |> Seq.sortBy (fun kv -> kv.Key) do
-      printfn "%05X : %5d" kvp.Key kvp.Value
+      printfn "%07X : %5d" kvp.Key kvp.Value
     ()
   
   | "help" ->

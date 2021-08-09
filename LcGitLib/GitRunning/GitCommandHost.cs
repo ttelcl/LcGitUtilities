@@ -190,8 +190,13 @@ namespace LcGitLib.GitRunning
           {
             process.StandardInput.Close();
           }
-          string line;
-          while((line = process.StandardOutput.ReadLine()) != null)
+          //string line;
+          //while((line = process.StandardOutput.ReadLine()) != null)
+          //{
+          //  observer.OnNext(line);
+          //}
+          var lineReader = new GitLineReader();
+          foreach(var line in lineReader.ReadLines(process.StandardOutput.BaseStream))
           {
             observer.OnNext(line);
           }
@@ -212,11 +217,16 @@ namespace LcGitLib.GitRunning
 
     private static IEnumerable<string> ProcessOutputLines(Process process)
     {
-      string line;
-      while((line = process.StandardOutput.ReadLine()) != null)
+      var lineReader = new GitLineReader();
+      foreach(var line in lineReader.ReadLines(process.StandardOutput.BaseStream))
       {
         yield return line;
       }
+      //string line;
+      //while((line = process.StandardOutput.ReadLine()) != null)
+      //{
+      //  yield return line;
+      //}
     }
 
     private void ReportCall(ProcessStartInfo psi)

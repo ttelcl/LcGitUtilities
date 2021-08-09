@@ -38,7 +38,7 @@ namespace LcGitLib.GraphModel
       _roots = new List<Node>();
       _tips = new List<Node>();
       Roots = _roots.AsReadOnly();
-      Tips = _roots.AsReadOnly();
+      Tips = _tips.AsReadOnly();
       var index = 0;
       foreach(var seed in seeds)
       {
