@@ -114,6 +114,7 @@ namespace LcGitLib.GitRunning
     {
       var psi = cmd.BakeCommand();
       psi.RedirectStandardOutput = true;
+      psi.StandardOutputEncoding = Encoding.UTF8; // !
       psi.RedirectStandardError = false;
       psi.RedirectStandardInput = terminateInput;
       ReportCall(psi);
@@ -177,6 +178,7 @@ namespace LcGitLib.GitRunning
     {
       var psi = cmd.BakeCommand();
       psi.RedirectStandardOutput = true;
+      psi.StandardOutputEncoding = Encoding.UTF8; // !
       psi.RedirectStandardError = false;
       psi.RedirectStandardInput = terminateInput;
       ReportCall(psi);
