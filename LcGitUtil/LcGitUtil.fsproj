@@ -13,11 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ColorPrint.fs" />
     <Compile Include="CommonTools.fs" />
     <Compile Include="PrintUtils.fs" />
     <Compile Include="ExceptionTool.fs" />
     <Compile Include="Usage.fs" />
-    <Compile Include="ArgumentLogger.fs" />
+    <Compile Include="GitUtilCfg.fs" />
     <Compile Include="RepoDb.fs" />
     <Compile Include="AppLabel.fs" />
     <Compile Include="AppLog.fs" />

@@ -9,7 +9,7 @@ open PrintUtils
 open Usage
 
 let private initcfg doInit =
-  let cfg = ArgumentLogger.loadConfig doInit
+  let cfg = GitUtilCfg.loadConfig doInit
   cfg.GitPath     |> lp "GitPath"
   cfg.MachineName |> lp "Machine Name"
   cfg.StageFolder |> lp "Stage Root"

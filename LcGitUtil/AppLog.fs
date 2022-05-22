@@ -9,7 +9,7 @@ open LcGitLib.FileUtilities
 open LcGitLib.RawLog
 
 open CommonTools
-open ArgumentLogger
+open GitUtilCfg
 
 type private LogOutput =
   | ToConsole

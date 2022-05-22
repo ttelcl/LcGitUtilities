@@ -12,7 +12,7 @@ open LcGitLib.MetaBase
 
 open CommonTools
 open PrintUtils
-open ArgumentLogger
+open GitUtilCfg
 
 let resolveRepoWitness (witness: string) =
   if witness.Contains("::") then

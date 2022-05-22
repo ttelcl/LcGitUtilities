@@ -11,7 +11,7 @@ open LcGitLib.RepoTools
 open LcGitLib.GraphModel
 
 open CommonTools
-open ArgumentLogger
+open GitUtilCfg
 open PrintUtils
 open Usage
 
