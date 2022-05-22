@@ -33,7 +33,7 @@ namespace HyperGitLib
       Bucket0 = bucket;
       Name0 = name;
       Origin = origin;
-      Host = host;
+      Hosts = host.Split('/').Select(h => h.Trim()).ToList().AsReadOnly();
       Renamed = false;
 
       if(Origin.StartsWith("https://"))
@@ -100,7 +100,12 @@ namespace HyperGitLib
         throw new InvalidOperationException(
           $"Unsupported origin style in {Origin}");
       }
-      HostMatch = StringComparer.OrdinalIgnoreCase.Equals(Environment.MachineName, Host);
+      var hostname = Environment.MachineName;
+      HostMatch =
+        Hosts.Any(h => StringComparer.OrdinalIgnoreCase.Equals(hostname, h));
+      var hostdisablename = "!" + hostname;
+      HostDisabled =
+        Hosts.Any(h => StringComparer.OrdinalIgnoreCase.Equals(hostdisablename, h));
       if(String.IsNullOrEmpty(Bucket))
       {
         BucketPath = Owner.RootFolder;
@@ -148,9 +153,9 @@ namespace HyperGitLib
     public bool Disable { get; }
 
     /// <summary>
-    /// The host this row applies to
+    /// The hosts this row applies to. Includes hosts explicitly disabled with the '!' prefix
     /// </summary>
-    public string Host { get; }
+    public IReadOnlyList<string> Hosts { get; }
 
     /// <summary>
     /// The original bucket name as specified in the config.
@@ -183,20 +188,25 @@ namespace HyperGitLib
     public string Origin { get; }
 
     /// <summary>
-    /// True if the host matches
+    /// True if the host matches and is not explicitly disabled
     /// </summary>
     public bool HostMatch { get; }
 
     /// <summary>
+    /// True if the host matches but is explicitly disabled
+    /// </summary>
+    public bool HostDisabled { get; }
+
+    /// <summary>
     /// True if this record is enabled and matching the host name
     /// </summary>
-    public bool IsEnabled => !Disable && HostMatch;
+    public bool IsEnabled => !Disable && !HostDisabled && HostMatch;
 
     /// <summary>
     /// The path to the bucket folder
     /// </summary>
     public string BucketPath { get; }
-    
+
     /// <summary>
     /// The path to the target repository
     /// </summary>

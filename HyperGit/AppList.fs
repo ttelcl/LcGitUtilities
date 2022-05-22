@@ -25,6 +25,7 @@ let run args =
     CfgFile = "repos.csv"
   }
   let hgc = new HyperGitConfig(o.CfgFile)
+  cp $"Loading configuration from \fg{hgc.FileName}\f0"
   for e in hgc.Entries do
     if e.IsEnabled then
       cpx $"\fg%35s{e.Name}\f0 "
@@ -34,5 +35,9 @@ let run args =
       else
         cp $"\fk{repopath}\f0"
     else
-      cp $"\fk%35s{e.Name}  (inactive)"
+      if e.HostMatch || e.HostDisabled then
+        cp $"\fk%35s{e.Name} (disabled)"
+      else
+        if verbose then
+          cp $"\fk%35s{e.Name} (not active for this host)"
   0
