@@ -35,6 +35,7 @@ namespace HyperGitLib
       Origin = origin;
       Hosts = host.Split('/').Select(h => h.Trim()).ToList().AsReadOnly();
       Renamed = false;
+      Remote = "origin"; // TODO: make this configurable
 
       if(Origin.StartsWith("https://"))
       {
@@ -216,5 +217,11 @@ namespace HyperGitLib
     /// True if repository name differs from the derived name
     /// </summary>
     public bool Renamed { get; }
+
+    /// <summary>
+    /// The name of the remote that this record is about.
+    /// CURRENTLY HARDCODED AS 'origin'
+    /// </summary>
+    public string Remote { get; }
   }
 }

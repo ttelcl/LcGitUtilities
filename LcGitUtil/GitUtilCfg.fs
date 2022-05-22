@@ -34,17 +34,6 @@ let private printArguments shortGit (psi:ProcessStartInfo) =
       eprintf " %s" gitArg
     resetColor()
     eprintfn ""
-    //bcolor Color.DarkBlue
-    //let gtp = psi.EnvironmentVariables.["GIT_TERMINAL_PROMPT"]
-    //eprintf " * GIT_TERMINAL_PROMPT = "
-    //if gtp |> String.IsNullOrEmpty then
-    //  color Color.DarkGray
-    //  eprintf "(not set)"
-    //else
-    //  color Color.DarkYellow
-    //  eprintf "%s" gtp
-    //resetColor()
-    //eprintfn ""
   ()
 
 let makeLogger shortGit =
