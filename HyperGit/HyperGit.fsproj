@@ -18,6 +18,7 @@
     <Compile Include="Usage.fs" />
     <Compile Include="GitExecute.fs" />
     <Compile Include="AppClone.fs" />
+    <Compile Include="AppUpdate.fs" />
     <Compile Include="AppList.fs" />
     <Compile Include="Program.fs" />
     <None Include="README.md" />

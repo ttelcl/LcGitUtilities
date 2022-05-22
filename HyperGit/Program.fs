@@ -22,6 +22,8 @@ let rec run arglist =
     rest |> AppList.run
   | "clone" :: rest ->
     rest |> AppClone.run
+  | "update" :: rest ->
+    rest |> AppUpdate.run
   | x :: _ ->
     cp $"\frUnknown command \fo{x}\f0"
     1

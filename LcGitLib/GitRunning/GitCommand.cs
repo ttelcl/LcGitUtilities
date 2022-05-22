@@ -179,7 +179,7 @@ namespace LcGitLib.GitRunning
     }
 
     /// <summary>
-    /// Generic add a arguments after the main command
+    /// Generic add arguments after the main command
     /// </summary>
     /// <param name="arguments">
     /// The argument strings to add. The .NET framework takes care of quoting
@@ -200,6 +200,29 @@ namespace LcGitLib.GitRunning
         _postCommandArguments.Add(argument);
       }
       return this;
+    }
+
+    /// <summary>
+    /// Generic conditional add arguments after the main command
+    /// </summary>
+    /// <param name="condition">
+    /// When true: add the arguments. When false: do nothing
+    /// </param>
+    /// <param name="arguments">
+    /// The argument strings to add. The .NET framework takes care of quoting
+    /// if needed, so do not pre-quote
+    /// </param>
+    /// <returns>
+    /// Returns this same object, for fluent calls
+    /// </returns>
+    public GitCommand AddPostIf(bool condition, params string[] arguments)
+    {
+      if(!HasCommand)
+      {
+        throw new InvalidOperationException(
+          "These arguments must be provided after the main command");
+      }
+      return condition ? AddPost(arguments) : this;
     }
 
     /// <summary>

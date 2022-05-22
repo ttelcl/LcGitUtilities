@@ -48,8 +48,11 @@ namespace HyperGitLib
         }
         else
         {
-          var entry = HyperGitEntry.FromLine(this, line);
-          _entries.Add(entry);
+          if(!String.IsNullOrEmpty(line) && !line.StartsWith("#"))
+          {
+            var entry = HyperGitEntry.FromLine(this, line);
+            _entries.Add(entry);
+          }
         }
       }
     }
