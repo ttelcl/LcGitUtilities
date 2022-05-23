@@ -11,6 +11,7 @@ type private UpdateOptions = {
   CfgFile: string
   Execute: bool
   GitVerbose: bool
+  MatchFilter: string option
 }
 
 let gitpath (path:string) =
@@ -31,7 +32,13 @@ let run args =
       rest |> parseMore {o with CfgFile = cfgfile}
     | "-x" :: rest ->
       rest |> parseMore {o with Execute = true}
+    | "-all" :: rest ->
+      rest |> parseMore {o with MatchFilter = Some("")}
+    | "-m" :: filter :: rest ->
+      rest |> parseMore {o with MatchFilter = Some(filter)}
     | [] ->
+      if o.MatchFilter.IsNone then
+        failwith "-all or -m is required"
       o
     | x :: _ ->
       failwithf $"Unrecognized argument '{x}'"
@@ -39,6 +46,7 @@ let run args =
     CfgFile = "repos.csv"
     Execute = false
     GitVerbose = false
+    MatchFilter = None
   }
   let hgc = new HyperGitConfig(o.CfgFile)
   let mutable ignored = 0
@@ -49,12 +57,12 @@ let run args =
       GitExecute.makeGitHost true
     else
       null
-  for e in hgc.Entries do
+  for e in hgc.MatchEntries(o.MatchFilter.Value) do
     if e.IsEnabled then
       let repopath = e.RepoPath
       if repopath |> Directory.Exists then
         existing <- existing + 1
-        cp $"\fg{e.Name}\f0:"
+        cp $"{e.Bucket}/\fg{e.Name}\f0:"
         let repo = repopath |> gitpath
         let cmd =
           if githost <> null then
@@ -75,11 +83,11 @@ let run args =
       else
         missing <- missing + 1
         if verbose then
-          cp $"\fk{e.Name}\f0 (missing)"
+          cp $"\fk{e.Bucket}/{e.Name}\f0 (missing)"
     else
       ignored <- ignored + 1
       if verbose then
-        cp $"\fk%s{e.Name}  (inactive)"
+        cp $"{e.Bucket}/\fk{e.Name}  (inactive)"
   let total = existing + missing
   cp $"Of \fc{total}\f0 total active repositories, \fg{missing}\f0 are still missing, and \fy{existing}\f0 exist"
   0

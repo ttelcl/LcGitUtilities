@@ -10,6 +10,7 @@ open CommonTools
 type private CloneOptions = {
   CfgFile: string
   Execute: bool
+  MatchFilter: string option
 }
 
 let gitpath (path:string) =
@@ -28,13 +29,20 @@ let run args =
       rest |> parseMore {o with CfgFile = cfgfile}
     | "-x" :: rest ->
       rest |> parseMore {o with Execute = true}
+    | "-all" :: rest ->
+      rest |> parseMore {o with MatchFilter = Some("")}
+    | "-m" :: filter :: rest ->
+      rest |> parseMore {o with MatchFilter = Some(filter)}
     | [] ->
+      if o.MatchFilter.IsNone then
+        failwith "-all or -m is required"
       o
     | x :: _ ->
       failwithf $"Unrecognized argument '{x}'"
   let o = args |> parseMore {
     CfgFile = "repos.csv"
     Execute = false
+    MatchFilter = None
   }
   let hgc = new HyperGitConfig(o.CfgFile)
   let mutable ignored = 0
@@ -45,7 +53,7 @@ let run args =
       GitExecute.makeGitHost true
     else
       null
-  for e in hgc.Entries do
+  for e in hgc.MatchEntries(o.MatchFilter.Value) do
     if e.IsEnabled then
       let repopath = e.RepoPath
       if repopath |> Directory.Exists then

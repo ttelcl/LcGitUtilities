@@ -7,6 +7,7 @@ open HyperGitLib
 
 type private ListOptions = {
   CfgFile: string
+  MatchFilter: string
 }
 
 let run args =
@@ -17,16 +18,21 @@ let run args =
       rest |> parseMore o
     | "-f" :: cfgfile :: rest ->
       rest |> parseMore {o with CfgFile = cfgfile}
+    | "-all" :: rest ->  // its the default; present just for balance with "update" command
+      rest |> parseMore {o with MatchFilter = ""}
+    | "-m" :: filter :: rest ->
+      rest |> parseMore {o with MatchFilter = filter}
     | [] ->
       o
     | x :: _ ->
       failwithf $"Unrecognized argument '{x}'"
   let o = args |> parseMore {
     CfgFile = "repos.csv"
+    MatchFilter = ""
   }
   let hgc = new HyperGitConfig(o.CfgFile)
   cp $"Loading configuration from \fg{hgc.FileName}\f0"
-  for e in hgc.Entries do
+  for e in hgc.MatchEntries(o.MatchFilter) do
     if e.IsEnabled then
       cpx $"\fg%35s{e.Name}\f0 "
       let repopath = e.RepoPath

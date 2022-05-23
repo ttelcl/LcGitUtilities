@@ -72,5 +72,27 @@ namespace HyperGitLib
     /// </summary>
     public IReadOnlyList<HyperGitEntry> Entries { get; }
 
+    /// <summary>
+    /// Enumerate entries matching the filter (all entries for an empty filter)
+    /// </summary>
+    public IEnumerable<HyperGitEntry> MatchEntries(string filter)
+    {
+      foreach(var entry in _entries)
+      {
+        if(String.IsNullOrEmpty(filter))
+        {
+          yield return entry;
+        }
+        else
+        {
+          var path = entry.Bucket + "/" + entry.Name;
+          if(path.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0)
+          {
+            yield return entry;
+          }
+        }
+      }
+    }
+
   }
 }
