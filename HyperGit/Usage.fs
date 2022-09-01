@@ -17,7 +17,7 @@ let usage detailed =
   cp "   \fg-x\f0         Execute the generated GIT commands as child processes"
   cp "   \fg-V\f0         Run GIT verbosely (without making hypergit itself verbose)"
   cp "\fg-v\f0            Verbose mode"
-  cp "\fg-f <cfgfile>\f0  Use the specified config file."
+  cp "\fg-f <cfgfile>\f0  Use the specified config file. Defaults to \fyrepos.csv\f0 in the current directory"
   cp "\fx\fx              Default is '\fcrepos.csv\f0' in current directory"
   cp "\fg-all\f0          Apply command to all enabled repositories for this host"
   cp "\fg-m <filter>\f0   Only apply to repositories matching the filter string"
