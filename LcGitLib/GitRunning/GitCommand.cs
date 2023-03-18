@@ -250,9 +250,19 @@ namespace LcGitLib.GitRunning
     /// Change the initial folder, which will be used to determine the repository location
     /// ("-C" option)
     /// </summary>
+    /// <param name="startFolder">
+    /// The modified start folder, or null to not modify it.
+    /// </param>
     public GitCommand WithFolder(string startFolder)
     {
-      return AddPreRetroActive("-C", startFolder);
+      if(!String.IsNullOrEmpty(startFolder))
+      {
+        return AddPreRetroActive("-C", startFolder);
+      }
+      else
+      {
+        return this;
+      }
     }
 
   }
