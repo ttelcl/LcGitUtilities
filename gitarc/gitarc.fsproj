@@ -15,12 +15,16 @@
     <Compile Include="CommonTools.fs" />
     <Compile Include="PrintUtils.fs" />
     <Compile Include="ExceptionTool.fs" />
+    <Compile Include="GitExecute.fs" />
     <Compile Include="Usage.fs" />
+    <Compile Include="CommandList.fs" />
     <Compile Include="Program.fs" />
     <None Include="README.md" />
   </ItemGroup>
 
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\LcGitLib\LcGitLib.csproj" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="6.0.3" />

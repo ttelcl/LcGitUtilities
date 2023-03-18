@@ -5,6 +5,7 @@ open System
 open CommonTools
 open ExceptionTool
 open Usage
+open ColorPrint
 
 let rec run arglist =
   // For subcommand based apps, split based on subcommand here
@@ -13,16 +14,16 @@ let rec run arglist =
     verbose <- true
     rest |> run
   | "--help" :: _
-  | "-h" :: _
+  | "-h" :: _ ->
+    usage "all"
+    0
   | [] ->
-    usage verbose
+    usage null
     0  // program return status code to the operating system; 0 == "OK"
-  //  *EXAMPLE*:
-  //| "foo" :: rest ->
-  //  rest |> AppFoo.runFoo
-  | _ :: _ ->
-    // TODO: actual processing based on command line arguments
-    new NotImplementedException("gitarc.exe is not yet implemented") |> raise
+  | "list" :: rest ->
+    rest |> CommandList.run
+  | x :: _ ->
+    cp $"\frUnknown Command\f0: \fo%s{x}"
     1
 
 [<EntryPoint>]
