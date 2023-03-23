@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Newtonsoft.Json.Linq;
+
 namespace LcGitLib.GitModels.Refs
 {
   /// <summary>
@@ -113,6 +115,42 @@ namespace LcGitLib.GitModels.Refs
       foreach(var node in Children.SelectMany(n => n.EnumerateNodes()))
       {
         yield return node;
+      }
+    }
+
+    /// <summary>
+    /// Convert the content of this node to a JSON representation.
+    /// </summary>
+    /// <returns>
+    /// If the node has no children: a JSON string value or JSON null value. If 
+    /// it has children: an object. If it has both: an object, with an extra
+    /// key that carries the value.
+    /// </returns>
+    public JToken ContentToJson()
+    {
+      if(_children.Count > 0)
+      {
+        var job = new JObject();
+        if(Value.HasValue)
+        {
+          job[""] = Value.Value.Id;
+        }
+        foreach(var child in Children)
+        {
+          job[child.ShortName] = child.ContentToJson();
+        }
+        return job;
+      }
+      else
+      {
+        if(Value.HasValue)
+        {
+          return new JValue(Value.Value.Id);
+        }
+        else
+        {
+          return JValue.CreateNull();
+        }
       }
     }
   }

@@ -18,6 +18,7 @@
     <Compile Include="GitExecute.fs" />
     <Compile Include="Usage.fs" />
     <Compile Include="CommandList.fs" />
+    <Compile Include="CommandTree.fs" />
     <Compile Include="Program.fs" />
     <None Include="README.md" />
   </ItemGroup>
@@ -27,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="6.0.3" />
+    <PackageReference Update="FSharp.Core" Version="7.0.200" />
   </ItemGroup>
 
 </Project>

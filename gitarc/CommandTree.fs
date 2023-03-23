@@ -1,4 +1,4 @@
-﻿module CommandList
+﻿module CommandTree
 
 open System
 open System.IO
@@ -62,9 +62,13 @@ let run args =
     let tree = new RefTree()
     for line in lines do
       let ok, node = tree.TryParseAndInsert(line)
-      if ok then
-        cp $"\fy%s{node.Value.Value.ToString()} \fg%s{node.Parent.FullName}\f0/\fc{node.ShortName}"
-      else
-        cp $"\fr%s{line}"
+      //if ok then
+      //  cp $"\fy%s{node.Value.Value.ToString()} \fg%s{node.Parent.FullName}\f0/\fc{node.ShortName}"
+      //else
+      //  cp $"\fr%s{line}"
+      ()
+    let job = tree.ToJson()
+    let json = JsonConvert.SerializeObject(job, Formatting.Indented);
+    cp $"{json}"
     status
 

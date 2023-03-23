@@ -7,7 +7,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
+using Newtonsoft.Json.Linq;
 
 namespace LcGitLib.GitModels.Refs
 {
@@ -93,6 +96,53 @@ namespace LcGitLib.GitModels.Refs
       return
         EnumerateNodes()
         .Where(n => n.Value != null);
+    }
+
+    /// <summary>
+    /// Try to parse a line of output of "git ls-remote" or "git show-ref" and insert its
+    /// information in this tree
+    /// </summary>
+    /// <param name="line">
+    /// The data line in the format {id}{whitespace}{refs/...}
+    /// </param>
+    /// <param name="node">
+    /// On success: the node that was inserted or updated
+    /// </param>
+    /// <returns>
+    /// True if the format of the line looked right and the data was inserted,
+    /// false if the content wasn't recognized
+    /// </returns>
+    public bool TryParseAndInsert(string line, out RefTreeNode node)
+    {
+      if(String.IsNullOrEmpty(line))
+      {
+        node = null;
+        return false;
+      }
+      var m = Regex.Match(line, @"^([a-f0-9]{40})\s+(refs(/[^/]+)+)$");
+      if(m.Success)
+      {
+        var id = new GitId(m.Groups[1].Value);
+        var path = m.Groups[2].Value;
+        node = GetNode(path, true);
+        node.Value = id;
+        return true;
+      }
+      else
+      {
+        node = null;
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Convert this tree to a JSON object
+    /// </summary>
+    public JObject ToJson()
+    {
+      var job = new JObject();
+      job[ShortName] = ContentToJson();
+      return job;
     }
 
   }

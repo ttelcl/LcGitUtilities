@@ -22,6 +22,8 @@ let rec run arglist =
     0  // program return status code to the operating system; 0 == "OK"
   | "list" :: rest ->
     rest |> CommandList.run
+  | "tree" :: rest ->
+    rest |> CommandTree.run
   | x :: _ ->
     cp $"\frUnknown Command\f0: \fo%s{x}"
     1

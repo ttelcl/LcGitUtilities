@@ -21,6 +21,18 @@ let usage detail =
   if doHeader "list" then
     cp "\fogitarc \fylist\f0"
     cp "   List archive nodes in the repo"
+  if doDetail "list" then
+    cp "   \fg-R \fc<remote>\f0    The remote to inspect (the name of a configured remote"
+    cp "   \fx\fx\fx               or a remote repo). When omitted, the local repo is used."
+    cp "   \fg-r \f0\fx            Shortcut for \fg-R \fcorigin\f0."
+    cp ""
+  if doHeader "tree" then
+    cp "\fogitarc \fytree\f0 [\fg-r\f0|\fg-R \fc<remote>\f0]"
+    cp "   List archive nodes in the local or remote repo in tree form"
+  if doDetail "tree" then
+    cp "   \fg-R \fc<remote>\f0    The remote to inspect (the name of a configured remote"
+    cp "   \fx\fx\fx               or a remote repo). When omitted, the local repo is used."
+    cp "   \fg-r \f0\fx            Shortcut for \fg-R \fcorigin\f0."
     cp ""
   cp "\fbCommon Options"
   cp "\fg-v               \fx\f0Verbose mode"
