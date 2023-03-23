@@ -45,27 +45,20 @@ let run args =
   | None ->
     1
   | Some(o) ->
-    let host = GitExecute.makeGitHost verbose true
-    let cmd = 
+    let cmd =
       match o.Remote with
+      | Some("") | Some(null) ->
+        GitExecute.gitLsRemoteCommand o.RepoFolder None
       | Some(remote) ->
-        host.NewCommand()
-          .WithFolder(o.RepoFolder |> Option.defaultValue null)
-          .WithCommand("ls-remote")
-          .AddPost("--head")
-          .AddPostIf(not(String.IsNullOrEmpty(remote)), remote)
+        GitExecute.gitLsRemoteCommand o.RepoFolder (Some remote)
       | None ->
-        host.NewCommand()
-          .WithFolder(o.RepoFolder |> Option.defaultValue null)
-          .WithCommand("show-ref")
-    let lines, status = host.RunToLines(cmd)
+        GitExecute.gitShowRefCommand o.RepoFolder
+    let lines, status = cmd.RunToLines()
     let tree = new RefTree()
     for line in lines do
       let ok, node = tree.TryParseAndInsert(line)
-      //if ok then
-      //  cp $"\fy%s{node.Value.Value.ToString()} \fg%s{node.Parent.FullName}\f0/\fc{node.ShortName}"
-      //else
-      //  cp $"\fr%s{line}"
+      if ok |> not then
+        ecp $"\frSKIP:\fo {line}"
       ()
     let job = tree.ToJson()
     let json = JsonConvert.SerializeObject(job, Formatting.Indented);

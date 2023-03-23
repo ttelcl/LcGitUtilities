@@ -89,6 +89,36 @@ namespace LcGitLib.GitRunning
       return Host.RunToConsole(this, terminateInput);
     }
 
+    /// <summary>
+    /// Run the command and pass each returned line to the provided handler delegate
+    /// </summary>
+    public int RunToLineSequence(
+      Action<IEnumerable<string>> handler,
+      bool terminateInput = true)
+    {
+      return Host.RunToLineSequence(this, handler, terminateInput);
+    }
+
+    /// <summary>
+    /// Run the command and capture the returned lines into a List
+    /// </summary>
+    public List<string> RunToLines(
+      out int exitCode,
+      bool terminateInput = true)
+    {
+      return Host.RunToLines(this, out exitCode, terminateInput);
+    }
+
+    /// <summary>
+    /// Run the command and send each output line to the provided observer
+    /// </summary>
+    public int RunToLineObserver(
+      IObserver<string> observer,
+      bool terminateInput = true)
+    {
+      return Host.RunToLineObserver(this, observer, terminateInput);
+    }
+
     // Fluent API primitives
 
     /// <summary>
@@ -179,6 +209,22 @@ namespace LcGitLib.GitRunning
     }
 
     /// <summary>
+    /// Generic add an argument after the main command. This is an alias
+    /// for <see cref="AddPost(string)"/>
+    /// </summary>
+    /// <param name="argument">
+    /// The argument string to add. The .NET framework takes care of quoting
+    /// if needed, so do not pre-quote
+    /// </param>
+    /// <returns>
+    /// Returns this same object, for fluent calls
+    /// </returns>
+    public GitCommand AddPost1(string argument)
+    {
+      return AddPost(argument);
+    }
+
+    /// <summary>
     /// Generic add arguments after the main command
     /// </summary>
     /// <param name="arguments">
@@ -223,6 +269,24 @@ namespace LcGitLib.GitRunning
           "These arguments must be provided after the main command");
       }
       return condition ? AddPost(arguments) : this;
+    }
+
+    /// <summary>
+    /// Generic conditional add one argument after the main command
+    /// </summary>
+    /// <param name="condition">
+    /// When true: add the arguments. When false: do nothing
+    /// </param>
+    /// <param name="argument">
+    /// The argument string to add. The .NET framework takes care of quoting
+    /// if needed, so do not pre-quote
+    /// </param>
+    /// <returns>
+    /// Returns this same object, for fluent calls
+    /// </returns>
+    public GitCommand AddPostIf1(bool condition, string argument)
+    {
+      return condition ? AddPost(argument) : this;
     }
 
     /// <summary>

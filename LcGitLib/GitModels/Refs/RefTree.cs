@@ -145,5 +145,19 @@ namespace LcGitLib.GitModels.Refs
       return job;
     }
 
+    /// <summary>
+    /// Create a deep clone, optionally restricted to nodes passed
+    /// by the <paramref name="condition"/> filter.
+    /// </summary>
+    /// <param name="condition">
+    /// If not null: a filter that allows skipping parts of the tree.
+    /// Only child nodes for which this returns true are copied.
+    /// </param>
+    public RefTree Clone(Func<RefTreeNode, bool> condition = null)
+    {
+      var node = new RefTree();
+      CopyChildClones(node, condition);
+      return node;
+    }
   }
 }

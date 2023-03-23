@@ -102,6 +102,24 @@ namespace LcGitLib.GitModels.Refs
     }
 
     /// <summary>
+    /// Remove this node from its parent
+    /// </summary>
+    public void Delete()
+    {
+      if(Parent == null)
+      {
+        throw new InvalidOperationException(
+          "Cannot delete the root of a tree");
+      }
+      Parent.DeleteChild(this);
+    }
+
+    internal void DeleteChild(RefTreeNode child)
+    {
+      _children.Remove(child.ShortName);
+    }
+
+    /// <summary>
     /// The children of this node
     /// </summary>
     public IReadOnlyCollection<RefTreeNode> Children { get => _children.Values; }
@@ -150,6 +168,18 @@ namespace LcGitLib.GitModels.Refs
         else
         {
           return JValue.CreateNull();
+        }
+      }
+    }
+
+    internal void CopyChildClones(RefTreeNode model, Func<RefTreeNode, bool> condition)
+    {
+      foreach(var modelChild in model.Children)
+      {
+        if(condition != null && condition(modelChild))
+        {
+          var child = GetChild(modelChild.ShortName, true);
+          child.CopyChildClones(modelChild, condition);
         }
       }
     }

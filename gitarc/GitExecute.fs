@@ -1,5 +1,6 @@
 ﻿module GitExecute
 
+open System
 open System.Diagnostics
 open System.IO
 
@@ -34,4 +35,23 @@ let makeGitHost echo shortGit =
     if echo then new GitArgLogger(fun psi -> printArguments shortGit psi) else null
   new GitCommandHost(gal, null)
 
+let lazyGitHost = lazy (makeGitHost verbose true)
 
+let gitCommand command repoFolder =
+  lazyGitHost.Force()
+    .NewCommand()
+    .WithFolder(repoFolder |> Option.defaultValue null)
+    .WithCommand(command)
+
+let gitLsRemoteCommand repoFolder remoteName =
+  let cmd = gitCommand "ls-remote" repoFolder
+  let cmd = cmd.AddPost("--refs")
+  match remoteName with
+  | Some(name) -> 
+    cmd.AddPost1(name)
+  | None ->
+    cmd
+
+let gitShowRefCommand repoFolder =
+  let cmd = gitCommand "show-ref" repoFolder
+  cmd
