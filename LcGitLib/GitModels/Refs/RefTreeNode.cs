@@ -102,6 +102,33 @@ namespace LcGitLib.GitModels.Refs
     }
 
     /// <summary>
+    /// Test if this node's full name starts with the given prefix
+    /// </summary>
+    /// <param name="prefix">
+    /// The prefix to test for
+    /// </param>
+    /// <param name="tail">
+    /// On match: the part of the full path after the prefix.
+    /// Otherwise null
+    /// </param>
+    /// <returns>
+    /// True if match, false otherwise
+    /// </returns>
+    public bool HasPrefix(string prefix, out string tail)
+    {
+      if(FullName.StartsWith(prefix))
+      {
+        tail = FullName.Substring(prefix.Length);
+        return true;
+      }
+      else
+      {
+        tail = null;
+        return false;
+      }
+    }
+
+    /// <summary>
     /// Remove this node from its parent
     /// </summary>
     public void Delete()

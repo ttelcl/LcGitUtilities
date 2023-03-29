@@ -24,6 +24,8 @@ let rec run arglist =
     rest |> CommandList.run
   | "tree" :: rest ->
     rest |> CommandTree.run
+  | "snap" :: rest ->
+    rest |> CommandTree.run
   | x :: _ ->
     cp $"\frUnknown Command\f0: \fo%s{x}"
     1
