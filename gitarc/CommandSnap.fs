@@ -4,6 +4,7 @@ open System
 open System.IO
 
 open Newtonsoft.Json
+open Newtonsoft.Json.Linq
 
 open LcGitLib.GitModels
 open LcGitLib.GitModels.Refs
@@ -23,6 +24,27 @@ type private RefData = {
   PlainNode: RefTreeNode option
   CanDelete: bool
 }
+
+let private rd2json rd =
+  let job = new JObject()
+  job["key"] <- rd.Key
+  match rd.BranchName with
+  | Some(bn) -> job["branch"] <- bn
+  | None -> ()
+  match rd.ArchiveNode with
+  | Some(an) -> job["archive"] <- an.FullName
+  | None -> ()
+  match rd.PlainNode with
+  | Some(pn) -> job["node"] <- pn.FullName
+  | None -> ()
+  job["canDelete"] <- rd.CanDelete
+  job
+
+let private refDataJson refdatas =
+  let ja = new JArray()
+  for rd in refdatas do
+    rd |> rd2json |> ja.Add
+  ja
 
 let private buildTree lines =
   let tree = new RefTree()
@@ -127,7 +149,21 @@ let run args =
       status
     else
       let tree = lines |> buildTree
-      failwith "NYI"
+      let refNodes =
+        tree.EnumerateAllValuedNodes()
+        |> Seq.choose classifyNode
+        |> Seq.toArray
+      
+      // Debug
+      let rnJsonArray = refNodes |> refDataJson
+      let j1name = "dump1.json"
+      do
+        use w = j1name |> startFile
+        let json = JsonConvert.SerializeObject(rnJsonArray, Formatting.Indented)
+        w.WriteLine(json)
+      j1name |> finishFile
+
+      0
 
 
 
