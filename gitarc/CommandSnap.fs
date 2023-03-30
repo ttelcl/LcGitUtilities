@@ -15,6 +15,7 @@ open CommonTools
 type private Options = {
   RepoFolder: string option
   DeleteArchiveBranches: bool
+  DebugTag: string
 }
 
 type private RefData = {
@@ -133,6 +134,8 @@ let run args =
       rest |> parseMore {o with DeleteArchiveBranches = true}
     | "-p" :: rest ->
       rest |> parseMore {o with DeleteArchiveBranches = false}
+    | "-tag" :: debugTag :: rest ->
+      rest |> parseMore {o with DebugTag = debugTag}
     | "-h" :: _
     | "-help" :: _ ->
       Usage.usage "snap"
@@ -145,6 +148,7 @@ let run args =
     args |> parseMore {
       RepoFolder = None
       DeleteArchiveBranches = false
+      DebugTag = null
     }
   match oo with
   | None ->
@@ -162,14 +166,14 @@ let run args =
         |> Seq.choose classifyNode
         |> Seq.toArray
       
-      // Debug
-      let rnJsonArray = refNodes |> refDataJson
-      let j1name = "dump1.json"
-      do
-        use w = j1name |> startFile
-        let json = JsonConvert.SerializeObject(rnJsonArray, Formatting.Indented)
-        w.WriteLine(json)
-      j1name |> finishFile
+      if o.DebugTag |> String.IsNullOrEmpty |> not then
+        let rnJsonArray = refNodes |> refDataJson
+        let j1name = $"{o.DebugTag}.pre-merge.json"
+        do
+          use w = j1name |> startFile
+          let json = JsonConvert.SerializeObject(rnJsonArray, Formatting.Indented)
+          w.WriteLine(json)
+        j1name |> finishFile
 
       0
 

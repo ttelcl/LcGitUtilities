@@ -10,7 +10,7 @@ let usage detail =
   let doHeader tag =
     doDetail tag || detail = null
   if doHeader "snap" then
-    cp "\fogitarc \fysnap\f0 [\fg-d\f0|\fg-p\f0]\f0"
+    cp "\fogitarc \fysnap\f0 [\fg-d\f0|\fg-p\f0] [\fg-tag \fc<debug-tag>\f0]"
     cp "   Snapshot all current branches, creating or updating their archive nodes."
   if doDetail "snap" then
     cp "   Branches prefixed with 'archive/' are treated as if that prefix"
