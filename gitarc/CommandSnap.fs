@@ -25,6 +25,13 @@ type private RefData = {
   CanDelete: bool
 }
 
+let rtn2json (node: RefTreeNode) =
+  let job = new JObject()
+  job["path"] <- node.FullName
+  if node.Value.HasValue then
+    job["target"] <- node.Value.Value.Id
+  job
+
 let private rd2json rd =
   let job = new JObject()
   job["key"] <- rd.Key
@@ -32,12 +39,13 @@ let private rd2json rd =
   | Some(bn) -> job["branch"] <- bn
   | None -> ()
   match rd.ArchiveNode with
-  | Some(an) -> job["archive"] <- an.FullName
+  | Some(an) -> job["archive"] <- an |> rtn2json
   | None -> ()
   match rd.PlainNode with
-  | Some(pn) -> job["node"] <- pn.FullName
+  | Some(pn) -> job["node"] <- pn |> rtn2json
   | None -> ()
-  job["canDelete"] <- rd.CanDelete
+  if rd.CanDelete then
+    job["canDelete"] <- rd.CanDelete
   job
 
 let private refDataJson refdatas =
