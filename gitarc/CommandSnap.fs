@@ -243,7 +243,7 @@ let run args =
           let ok =
             if pv <> av then
               // update needed
-              cp $"\fc%s{a.FullName}\f0 <- \fy%s{p.FullName}\f0"
+              cp $"\fc%s{a.FullName}\f0 <- \fy%s{p.FullName}\f0 \frNYI"
               false
             else
               if verbose || o.SoftVerbose then
@@ -259,6 +259,9 @@ let run args =
         | Some(p), None, canDelete ->
           let archiveNodeName = "refs/archive/" + node.Key
           cp $"\fg%s{archiveNodeName}\f0 (new) <- \fy%s{p.FullName}\f0"
+          let status = updateRef archiveNodeName p.FullName
+          if status <> 0 then
+            cp "\frFailed\f0!"
           ()
         | None, Some(a), _ ->
           if verbose || o.SoftVerbose then
