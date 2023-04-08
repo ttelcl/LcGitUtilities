@@ -10,13 +10,14 @@ let usage detail =
   let doHeader tag =
     doDetail tag || detail = null
   if doHeader "snap" then
-    cp "\fogitarc \fysnap\f0 [\fg-d\f0|\fg-p\f0] [\fg-tag \fc<debug-tag>\f0]"
+    cp "\fogitarc \fysnap\f0 [\fg-i\f0] [\fg-d\f0|\fg-p\f0] [\fg-tag \fc<debug-tag>\f0]"
     cp "   Snapshot all current branches, creating or updating their archive nodes."
   if doDetail "snap" then
     cp "   Branches prefixed with 'archive/' are treated as if that prefix"
     cp "   was missing."
     cp "   \fg-d\f0     After archiving, delete branches prefixed with 'archive/'"
     cp "   \fg-p\f0     After archiving, leave such branches as-is"
+    cp "   \fg-i\f0     Soft verbose: also print info on unchanged nodex (implied in \fg-v\f0)"
     cp ""
   if doHeader "list" then
     cp "\fogitarc \fylist\f0"

@@ -43,6 +43,9 @@ let gitCommand command repoFolder =
     .WithFolder(repoFolder |> Option.defaultValue null)
     .WithCommand(command)
 
+let cmdAddPost1 value (cmd: GitCommand) =
+  cmd.AddPost1 value
+
 let gitLsRemoteCommand repoFolder remoteName =
   let cmd = gitCommand "ls-remote" repoFolder
   let cmd = cmd.AddPost("--refs")
@@ -55,3 +58,10 @@ let gitLsRemoteCommand repoFolder remoteName =
 let gitShowRefCommand repoFolder =
   let cmd = gitCommand "show-ref" repoFolder
   cmd
+
+let gitUpdateRefCommand repoFolder source target =
+  let cmd = gitCommand "update-ref" repoFolder
+  cmd 
+  |> cmdAddPost1 target
+  |> cmdAddPost1 source
+
