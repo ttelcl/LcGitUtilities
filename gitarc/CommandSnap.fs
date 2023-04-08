@@ -243,8 +243,13 @@ let run args =
           let ok =
             if pv <> av then
               // update needed
-              cp $"\fc%s{a.FullName}\f0 <- \fy%s{p.FullName}\f0 \frNYI"
-              false
+              cp $"\fc%s{a.FullName}\f0 <- \fy%s{p.FullName}\f0"
+              let status = updateRef a.FullName p.FullName
+              if status <> 0 then
+                cp "\frFailed\f0!"
+                false
+              else
+                true
             else
               if verbose || o.SoftVerbose then
                 cp $"\fC%s{a.FullName}\f0 is up to date"
