@@ -266,8 +266,11 @@ let run args =
               if status = 0 then
                 cp $"\fo  Branch deleted: \fm%s{branch}"
               else
+                // This happens when this is the current branch.
+                // This does *not* happen when the branch has not been merged
+                // (succeeds with warning in that case)
                 cp $"\fr  Branch deletion failed \f0'\fo%s{branch}\f0'"
-                cp $"\fo  Consider manually delting with \fwgit branch -D \fg%s{branch}\f0"
+                cp $"\fo  Consider manually deleting with \fwgit branch -D \fg%s{branch}\f0"
           ()
         | Some(p), None, canDelete ->
           let archiveNodeName = "refs/archive/" + node.Key
