@@ -157,8 +157,8 @@ let run args =
     | "-v" :: rest ->
       verbose <- true
       rest |> parseMore o
-    | "-i" :: rest ->
-      rest |> parseMore {o with SoftVerbose = true}
+    | "-q" :: rest ->
+      rest |> parseMore {o with SoftVerbose = false}
     | "-C" :: folder :: rest ->
       rest |> parseMore {o with RepoFolder = Some(folder)}
     | "-d" :: rest ->
@@ -180,7 +180,7 @@ let run args =
       RepoFolder = None
       DeleteArchiveBranches = false
       DebugTag = null
-      SoftVerbose = false
+      SoftVerbose = true
     }
   match oo with
   | None ->

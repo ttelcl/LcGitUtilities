@@ -17,7 +17,7 @@ let usage detail =
     cp "   was missing."
     cp "   \fg-d\f0     After archiving, delete branches prefixed with 'archive/'"
     cp "   \fg-p\f0     After archiving, leave such branches as-is"
-    cp "   \fg-i\f0     Soft verbose: also print info on unchanged nodex (implied in \fg-v\f0)"
+    cp "   \fg-q\f0     Quieter: do not print info on unchanged nodes (ignored with \fg-v\f0)"
     cp ""
   if doHeader "list" then
     cp "\fogitarc \fylist\f0"
