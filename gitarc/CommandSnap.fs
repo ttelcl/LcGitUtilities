@@ -193,8 +193,12 @@ let run args =
         |> GitExecute.cmdAddPost1 source
       cmd.RunToConsole()
     let delBranch branch =
-      cp $"\frNYI \fodelete-branch \fy%s{branch}"
-      1
+      let cmd =
+        GitExecute.gitCommand "branch" o.RepoFolder
+        |> GitExecute.cmdAddPost1 "-d"
+        |> GitExecute.cmdAddPost1 branch
+      let status = cmd.RunToConsole()
+      status
     let cmd = GitExecute.gitShowRefCommand o.RepoFolder
     let lines, status = cmd.RunToLines()
     if status <> 0 then
@@ -216,7 +220,6 @@ let run args =
           w.WriteLine(json)
         j1name |> finishFile
 
-      //
       let grouped =
         refNodes
         |> Seq.groupBy (fun rn -> rn.Key)
@@ -242,7 +245,6 @@ let run args =
           let av = a.Value.Value
           let ok =
             if pv <> av then
-              // update needed
               cp $"\fc%s{a.FullName}\f0 <- \fy%s{p.FullName}\f0"
               let status = updateRef a.FullName p.FullName
               if status <> 0 then
@@ -255,11 +257,17 @@ let run args =
                 cp $"\fC%s{a.FullName}\f0 is up to date"
               true
           if canDelete && o.DeleteArchiveBranches then
+            let branch = node.BranchName.Value // safe to access because canDelete was true
             if not ok then
-              cp $"\foBranch deletion suppressed"
+              cp $"\fo  Branch deletion suppressed \f0(\fy%s{branch}\f0)"
             else
-              cp $"\foDeleting branch \f0'\fr%s{node.BranchName.Value}\f0'"
-              cp "\frNYI"
+              // cp $"\fo  Deleting branch \f0'\fr%s{branch}\f0'"
+              let status = delBranch branch
+              if status = 0 then
+                cp $"\fo  Branch deleted: \fm%s{branch}"
+              else
+                cp $"\fr  Branch deletion failed \f0'\fo%s{branch}\f0'"
+                cp $"\fo  Consider manually delting with \fwgit branch -D \fg%s{branch}\f0"
           ()
         | Some(p), None, canDelete ->
           let archiveNodeName = "refs/archive/" + node.Key
@@ -267,6 +275,9 @@ let run args =
           let status = updateRef archiveNodeName p.FullName
           if status <> 0 then
             cp "\frFailed\f0!"
+          else
+            if canDelete && o.DeleteArchiveBranches then
+              cp $"\fo  Branch deletion skipped during new archive node creation \f0(\fy%s{node.BranchName.Value}\f0)"
           ()
         | None, Some(a), _ ->
           if verbose || o.SoftVerbose then
