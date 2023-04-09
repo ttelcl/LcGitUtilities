@@ -26,6 +26,7 @@ TestResults/
 data/
 
 local.settings.json
+gitarc/Properties/launchSettings.json
 
 
 

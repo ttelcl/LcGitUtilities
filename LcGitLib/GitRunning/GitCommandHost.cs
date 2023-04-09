@@ -151,7 +151,7 @@ namespace LcGitLib.GitRunning
       bool terminateInput = true)
     {
       var list = new List<string>();
-      exitCode = RunToLineSequence(cmd, lines => list.AddRange(list), terminateInput);
+      exitCode = RunToLineSequence(cmd, lines => list.AddRange(lines), terminateInput);
       return list;
     }
 
@@ -222,11 +222,6 @@ namespace LcGitLib.GitRunning
       {
         yield return line;
       }
-      //string line;
-      //while((line = process.StandardOutput.ReadLine()) != null)
-      //{
-      //  yield return line;
-      //}
     }
 
     private void ReportCall(ProcessStartInfo psi)

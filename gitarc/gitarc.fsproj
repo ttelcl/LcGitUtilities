@@ -8,8 +8,6 @@
   <PropertyGroup>
     <!-- This prevents other language resources being emitted -->
     <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <FileVersion>2.0.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,16 +15,13 @@
     <Compile Include="CommonTools.fs" />
     <Compile Include="PrintUtils.fs" />
     <Compile Include="ExceptionTool.fs" />
+    <Compile Include="GitExecute.fs" />
     <Compile Include="Usage.fs" />
-    <Compile Include="GitUtilCfg.fs" />
-    <Compile Include="RepoDb.fs" />
-    <Compile Include="AppLabel.fs" />
-    <Compile Include="AppLog.fs" />
-    <Compile Include="AppRepocfg.fs" />
-    <Compile Include="AppRecipe.fs" />
-    <Compile Include="AppGraph.fs" />
-    <Compile Include="AppDb.fs" />
+    <Compile Include="CommandList.fs" />
+    <Compile Include="CommandTree.fs" />
+    <Compile Include="CommandSnap.fs" />
     <Compile Include="Program.fs" />
+    <None Include="README.md" />
   </ItemGroup>
 
   <ItemGroup>
